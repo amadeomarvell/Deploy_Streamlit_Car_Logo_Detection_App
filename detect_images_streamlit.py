@@ -3,11 +3,14 @@ import numpy as np
 import os
 from glob import glob
 from PIL import Image
+import io
+import base64
 from streamlit_option_menu import option_menu
+import streamlit as st
 from super_gradients.training import models
-import random
 import torch
 import cv2
+import random
 
 def plot_one_box(x, img, color=None, label=None, line_thickness=1):
     # Plots one bounding box on image img
@@ -31,7 +34,7 @@ def perform_inference(uploaded_file, confidence):
     model = models.get(
         'yolo_nas_m',
         num_classes=28,
-        checkpoint_path='/Users/amade/OneDrive/Desktop/SKRIPSI/Deploy_Streamlit_Car_Logo_Detection_App/ckpt_best.pth'
+        checkpoint_path='/Users/amade/OneDrive/Desktop/SKRIPSI/YOLO-NAS-Car-Logo-Detection/ckpt_best.pth'
     )
     model = model.to("cuda" if torch.cuda.is_available() else "cpu")
      # Get class names from the model
@@ -200,24 +203,18 @@ def detection_page():
             st.sidebar.image(selected_image_display, caption="Selected Image", use_column_width=True)
 
             if st.sidebar.button("Perform Inference"):
-                img = perform_inference(selected_image_path, confidence)
+                img, labels = perform_inference(selected_image_path, confidence)
                 
-                # Assuming 'perform_inference' returns 'img'
-
-                # Check if the image is not None
                 if img is not None:
                     # Display the image with bounding boxes
                     st.image(img, channels="BGR", caption="Processed Image", use_column_width=True)
-
                     # Show success validation message
                     st.success("Object detection succeeded!")
-
-                    # Display detected labels
-                    st.markdown(f'<strong class="st-cu">No logo detected because of blurred images of a car is usually a common case, YOLO NAS can perform detection well at a certain level of blurring</strong>', unsafe_allow_html=True)
                 else:
                     # Show validation message if detection failed
                     st.warning("Object detection failed. Please try again or choose a different image.")
-
+                # Display detected labels
+                st.markdown(f'<strong class="st-cu">No logo detected because of blurred images of a car is usually a common case, YOLO NAS can perform detection well at a certain level of blurring</strong>', unsafe_allow_html=True)
         elif chosen_folder == 'Very Small Logos':
             base_folder_path = '/Users/amade/OneDrive/Desktop/SKRIPSI/YOLO-NAS-Car-Logo-Detection/Streamlit_Image_Folder/Very_Small_Logos/'
             
@@ -230,24 +227,19 @@ def detection_page():
             st.sidebar.image(selected_image_display, caption="Selected Image", use_column_width=True)
 
             if st.sidebar.button("Perform Inference"):
-                img = perform_inference(selected_image_path, confidence)
+                img, labels = perform_inference(selected_image_path, confidence)
                 
-                # Assuming 'perform_inference' returns 'img'
-
-                # Check if the image is not None
                 if img is not None:
                     # Display the image with bounding boxes
                     st.image(img, channels="BGR", caption="Processed Image", use_column_width=True)
-
                     # Show success validation message
                     st.success("Object detection succeeded!")
-
-                    # Display detected labels
-                    st.markdown(f'<strong class="st-cu">YOLO NAS can detect small object better due to the architecture of the model and its DFL technique, which is very compatible for detecting car logos</strong>', unsafe_allow_html=True)
                 else:
                     # Show validation message if detection failed
                     st.warning("Object detection failed. Please try again or choose a different image.")
 
+                # Display detected labels
+                st.markdown(f'<strong class="st-cu">YOLO NAS can detect small object better due to the architecture of the model and its DFL technique, which is very compatible for detecting car logos</strong>', unsafe_allow_html=True)
         elif chosen_folder == 'Multiple Logos Detected':
             base_folder_path = '/Users/amade/OneDrive/Desktop/SKRIPSI/YOLO-NAS-Car-Logo-Detection/Streamlit_Image_Folder/Multiple_Detections/'
             
@@ -260,24 +252,19 @@ def detection_page():
             st.sidebar.image(selected_image_display, caption="Selected Image", use_column_width=True)
 
             if st.sidebar.button("Perform Inference"):
-                img = perform_inference(selected_image_path, confidence)
+                img, labels = perform_inference(selected_image_path, confidence)
                 
-                # Assuming 'perform_inference' returns 'img'
-
-                # Check if the image is not None
                 if img is not None:
                     # Display the image with bounding boxes
                     st.image(img, channels="BGR", caption="Processed Image", use_column_width=True)
-
                     # Show success validation message
                     st.success("Object detection succeeded!")
-
-                    # Display detected labels
-                    st.markdown(f'<strong class="st-cu">YOLO NAS can detect multiple logos in one image better than DETR or YOLOv7</strong>', unsafe_allow_html=True)
                 else:
                     # Show validation message if detection failed
                     st.warning("Object detection failed. Please try again or choose a different image.")
 
+                # Display detected labels
+                st.markdown(f'<strong class="st-cu">YOLO NAS can detect multiple logos in one image better than DETR or YOLOv7</strong>', unsafe_allow_html=True)
         elif chosen_folder == 'Difficult Angles':
             base_folder_path = '/Users/amade/OneDrive/Desktop/SKRIPSI/YOLO-NAS-Car-Logo-Detection/Streamlit_Image_Folder/Difficult_Angles/'
             
@@ -290,24 +277,19 @@ def detection_page():
             st.sidebar.image(selected_image_display, caption="Selected Image", use_column_width=True)
 
             if st.sidebar.button("Perform Inference"):
-                img = perform_inference(selected_image_path, confidence)
+                img, labels = perform_inference(selected_image_path, confidence)
                 
-                # Assuming 'perform_inference' returns 'img'
-
-                # Check if the image is not None
                 if img is not None:
                     # Display the image with bounding boxes
                     st.image(img, channels="BGR", caption="Processed Image", use_column_width=True)
-
                     # Show success validation message
                     st.success("Object detection succeeded!")
-
-                    # Display detected labels
-                    st.markdown(f'<strong class="st-cu">YOLO NAS can detect multiple logos in one image better than DETR or YOLOv7</strong>', unsafe_allow_html=True)
                 else:
                     # Show validation message if detection failed
                     st.warning("Object detection failed. Please try again or choose a different image.")
 
+                # Display detected labels
+                st.markdown(f'<strong class="st-cu">YOLO NAS can detect multiple logos in one image better than DETR or YOLOv7</strong>', unsafe_allow_html=True)
         elif chosen_folder == 'Normal':
             base_folder_path = '/Users/amade/OneDrive/Desktop/SKRIPSI/YOLO-NAS-Car-Logo-Detection/Streamlit_Image_Folder/Normal/'
             
@@ -320,34 +302,43 @@ def detection_page():
             st.sidebar.image(selected_image_display, caption="Selected Image", use_column_width=True)
 
             if st.sidebar.button("Perform Inference"):
-                img = perform_inference(selected_image_path, confidence)
+                img, labels = perform_inference(selected_image_path, confidence)
                 
-                # Assuming 'perform_inference' returns 'img'
-
-                # Check if the image is not None
                 if img is not None:
                     # Display the image with bounding boxes
                     st.image(img, channels="BGR", caption="Processed Image", use_column_width=True)
-
                     # Show success validation message
                     st.success("Object detection succeeded!")
-
-                    # Display detected labels
-                    st.markdown(f'<strong class="st-cu">This is just an example of a normal image which a YOLO-NAS model can perform car logo detection well</strong>', unsafe_allow_html=True)
                 else:
                     # Show validation message if detection failed
                     st.warning("Object detection failed. Please try again or choose a different image.")
 
-    if app_model == 'Input Image':
+                # Display detected labels
+                st.markdown(f'<p class="st-cu">This is just an example of a normal image which a YOLO-NAS model can perform car logo detection well</p>', unsafe_allow_html=True)
+
+    elif app_model == 'Input Image':
         uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+
+        # Display the selected image
+        if uploaded_file:
+            selected_image_display = Image.open(uploaded_file)
+            st.sidebar.image(selected_image_display, caption="Selected Image", use_column_width=True)
+        else:
+            st.warning("Please choose an image before performing inference.")
 
         if st.button("Perform Inference"):
             if uploaded_file:
-                img, labels = perform_inference(uploaded_file)
-
-                # Display the image with bounding boxes
-                st.image(img, channels="BGR", caption="Processed Image", use_column_width=True)                                                     
-
+                img, labels = perform_inference(uploaded_file, confidence)
+                
+                if img is not None:
+                    # Display the image with bounding boxes
+                    st.image(img, channels="BGR", caption="Processed Image", use_column_width=True)
+                    # Show success validation message
+                    st.success("Object detection succeeded!")
+                else:
+                    # Show validation message if detection failed
+                    st.warning("Object detection failed. Please try again or choose a different image.")
+                
     
     st.sidebar.title("How to Use")
     st.sidebar.markdown("""
